@@ -1,0 +1,1 @@
+1. speed is very bad, it is super slow, and it gets slower. This is because the process of selecting the initial selected point is slow. It picks a random point in policy space and then tries again if it is not closest to the selected region point. 
