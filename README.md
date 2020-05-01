@@ -3,7 +3,7 @@ PREPV reinforcment learning (Probabilistic Regional Epsilon Proportional Vector)
 
 ***[CURRENTLY UNDER DEVELOPMENT]***
 
-PREPV hyperparameters:
+**PREPV hyperparameters: **
 
 l: Number of steps to take, epsilon gradually decreases through this from 1 to 0. 
 
@@ -11,7 +11,7 @@ k: Used to control how sure the agent is of its area, if the graph shows it is t
 
 {l, k}={20, 0.65} was used. It worked well with l > 15 and 0.25<k<2
 
-PREPV algorithm:
+**PREPV algorithm: **
 
 First calculate epsilon s.t. it is linearly dicreasing from (0, 1) to (l, 0)
 
@@ -32,3 +32,9 @@ Multiply this vector by the scalar epsilon^k.
 Sum the vector of the initial selected point with this new vector. 
 
 This new vector corresponds to the point in policy space that the agent is selecting. 
+
+**PREPV example: **
+
+In the example from *rlearn_tst.py*, the reward is a function of policy s.t. there is a local max at \[0.2,0.2\] in policy space, and a global maximum at \[0.7,0.7\]. 
+
+When the agent initially believes that the local max is ideal, it eventually selects a different point to use as its region, and discovers the global max, which it stays nearby. 
