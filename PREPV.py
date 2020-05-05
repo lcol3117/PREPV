@@ -1,8 +1,6 @@
 import random as rnd, math as math
 class PREPV_agent:
-  def __init__(self, l, k, dims):
-    self.l = l
-    self.k = k
+  def __init__(self, dims):
     self.dims = dims
     self.accdata = []
     self.usedregions = []
@@ -27,7 +25,7 @@ class PREPV_agent:
     respoint = self.vectorSum(newvector, selectedpoint)
     return respoint
   def calculateEpsilon(self):
-    return (1 / (self.l)) * self.nsteps
+    return self.nsteps / (self.nsteps + 4)
   def selectRegion(self, epsilon):
     e2 = epsilon / 2
     ls = self.accdata[:]
@@ -69,7 +67,7 @@ class PREPV_agent:
     deltas = list(map(lambda i : (regionpt[i] - point[i]), r))
     return deltas
   def epsilonModifyMagnitude(self, oldvector, epsilon):
-    beta = epsilon**self.k #1-epsilon
+    beta = epsilon #1-epsilon
     newvector = list(map(lambda x : x * beta, oldvector))
     return newvector
   def vectorSum(self, a, b):

@@ -1,8 +1,7 @@
 import PREPV as PREPV, random as rnd, math as math
 import matplotlib.pyplot as plt
 numberofsteps = 20
-l = numberofsteps - 1
-agentmodel = PREPV.PREPV_agent(l, 0.65, 2)
+agentmodel = PREPV.PREPV_agent(2)
 def realLearnStep():
   policy = agentmodel.selectPolicy()
   performance = evaluatePolicy(policy)
@@ -33,7 +32,7 @@ def realLearning():
   for _ in range(1):
     pureExplorationStep()
   cnt = 0
-  while cnt < l:
+  while cnt < numberofsteps - 1:
     try: 
       result = realLearnStep()
       cnt += 1
