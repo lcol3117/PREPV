@@ -5,6 +5,8 @@ PREPV reinforcment learning (Probabilistic Regional Epsilon Proportional Vector)
 
 **PREPV hyperparameters: MIP only. This is because of the IPL2 algorithm which makes me happy. **
 
+However, if something is really messed up change j to something other than 3. 
+
 **Use: **
 
 `PREPV_agent(dims, mip)`
