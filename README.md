@@ -3,7 +3,7 @@ PREPV reinforcment learning (Probabilistic Regional Epsilon Proportional Vector)
 
 ***[CURRENTLY UNDER DEVELOPMENT]***
 
-**PREPV hyperparameters: None**
+**PREPV hyperparameters: MIP only. This is because of the IPL2 algorithm which makes me happy. **
 
 **Use: **
 
