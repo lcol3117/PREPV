@@ -1,7 +1,6 @@
 import PREPV as PREPV, random as rnd, math as math
 import matplotlib.pyplot as plt
-numberofsteps = 20
-agentmodel = PREPV.PREPV_agent(2)
+agentmodel = PREPV.PREPV_agent(2, 3)
 def realLearnStep():
   policy = agentmodel.selectPolicy()
   performance = evaluatePolicy(policy)
@@ -11,9 +10,9 @@ def realLearnStep():
 def evaluatePolicy(policy):
   realmax = [0.7, 0.7]
   dist = getL2NDist(realmax, policy)
-  initial = (math.sqrt(2) - dist) + 1
+  initial = (2 - dist) + 1
   otherdist = getL2NDist([0.2,0.2], policy)
-  otherinitial = math.sqrt(2) - dist
+  otherinitial = 2 - dist
   if dist < otherdist:
     return initial
   else:
@@ -31,13 +30,17 @@ def pureExplorationStep():
 def realLearning():
   for _ in range(1):
     pureExplorationStep()
-  cnt = 0
-  while cnt < numberofsteps - 1:
-    try: 
-      result = realLearnStep()
-      cnt += 1
-    except IndexError:
-      agentmodel.nsteps -= 1
+  notdone = True
+  cnt = 1
+  while notdone:
+    result = realLearnStep()
+    try:
+      notdone = agentmodel.prev_epsilon < 0.95
+      print("NOT DONE" if notdone else "DONE")
+    except TypeError:
+      notdone = True
+    print("{} steps have passed. ".format(cnt))
+    cnt += 1
   top = list(reversed(sorted(agentmodel.accdata, key = lambda x : x[1])))[0]
   [policy, performance] = top
   print("==============DONE==============")
