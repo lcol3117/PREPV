@@ -3,6 +3,8 @@ PREPV reinforcment learning (Probabilistic Regional Epsilon Proportional Vector)
 
 ***[CURRENTLY UNDER DEVELOPMENT]***
 
+[![Run on Repl.it](https://repl.it/badge/github/lcol3117/PREPV)](https://repl.it/github/lcol3117/PREPV)
+
 **PREPV hyperparameters: MIP only. This is because of the IPL2 algorithm which makes me happy. **
 
 However, if something is really messed up change j to something other than 3. 
