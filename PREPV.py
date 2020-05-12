@@ -1,25 +1,26 @@
 import random as rnd, math as math, functools as ft
 class PREPV_agent:
-  def __init__(self, dims):
+  def __init__(self, dims, mip):
     self.dims = dims
     self.accdata = []
     self.old_accdata = []
     self.usedregions = []
     self.nsteps = 0
-    self.old_epsilon = None
+    self.prev_epsilon = None
+    self.epsilonlimit = None
+    self.mip = mip
+    self.j = 3
   def updateQTable(self, policy, performance):
     self.old_accdata = self.accdata[:]
     self.accdata.append([policy, performance])
   def selectPolicy(self):
     print("I (Agent) am selecting a policy. ")
-    #print("My Q-Table is this: ")
-    #print(self.accdata)
     self.nsteps += 1
     epsilon = self.calculateEpsilon()
     print("Epsilon is {}. ".format(epsilon))
     selectedregion = self.selectRegion(epsilon)
     print("I chose region {}. ".format(selectedregion))
-    selectedpoint = self.randomWithinRegion(selectedregion)
+    selectedpoint = self.randomPoint()
     print("I selected point {} initially. ".format(selectedpoint))
     initialvector = self.calculateRectVector(selectedpoint, selectedregion)
     print("Local max is {} relative to my inital point. ".format(initialvector))
@@ -28,6 +29,7 @@ class PREPV_agent:
     respoint = self.vectorSum(newvector, selectedpoint)
     return respoint
   def calculateEpsilon(self):
+    k = 0.5
     try: 
       qtablemax = ft.reduce(
         lambda a,x : x[1] if x[1] > a else a,
@@ -39,69 +41,53 @@ class PREPV_agent:
         self.old_accdata,
         float("-inf")
       )
-    except IndexError:
-      pass
-    if len(self.old_accdata) > 1:
-      limit = abs(1 - ((qtablemax / old_qtablemax) * (1 - self.prev_epsilon)))
-      res = limit - ((1/2) ** self.nsteps)
-    else:
-      if len(self.accdata) == 0:
-        res = 0
-      elif (len(self.accdata) == 1) or (len(self.accdata) == 2):
-        res = 1 / 3
+      if qtablemax > old_qtablemax:
+        res = (qtablemax / self.mip) ** (1 / k)
       else:
-        res = (old_qtablemax / qtablemax) * 2
+        if self.prev_epsilon > (1 - (1 / 8)):
+          self.epsilonlimit = 1
+        res = (self.epsilonlimit * (self.nsteps + k)) / ((self.nsteps + k) + k)
+    except IndexError:
+      res = 0
     self.prev_epsilon = res
+    self.epsilonlimit = 1 - ((1 - res) / 2)
+    print("Set prev_epsilon to {}. ".format(self.prev_epsilon.__repr__()))
     return res
   def selectRegion(self, epsilon):
     e2 = epsilon / 2
     ls = self.accdata[:]
     ranking = sorted(ls, key = lambda x : x[1])[:]
-    #print("[selectRegion] ranking is: ")
-    #print(ranking)
     r = list(reversed(ranking))[:]
     for i in range(len(ranking)-1):
       if rnd.random() < e2:
         tmp = r[i+1][:]
         r[i+1] = r[i][:]
         r[i] = tmp[:]
-    newranking = r[:] #list(reversed(r))[:]
-    #print("[selectRegion] newranking is: ")
-    #print(newranking)
+    newranking = r[:]
     newtop = newranking[0]
     self.usedregions.append(newtop)
     return newtop
-  def randomWithinRegion(self, region):
-    while True:
-      rndpt = [ rnd.random() for _ in range(self.dims) ]
-      usabledata = list([ i[0] for i in (self.usedregions) ] + [region[0]])
-      #print("[randomWithinRegion] usabledata is: ")
-      #print(list(usabledata))
-      dists = list(map(lambda x : self.getL2NDist(x, rndpt), usabledata))
-      #print("[randomWithinRegion] dists are: ")
-      #print(dists)
-      mindistpt = usabledata[dists.index(min(dists))]
-      #print("[randomWithinRegion] mindistpt is: ")
-      #print(mindistpt)
-      #print("Region Point is: ")
-      #print(region[0])
-      if mindistpt == region[0]:
-        break
-    return rndpt
+  def randomPoint(self):
+    rndpt = map(
+      lambda _ : rnd.random(),
+      range(self.dims)
+    )
+    return list(rndpt)
   def calculateRectVector(self, point, region):
     regionpt = region[0]
-    r = [ i for i in range(self.dims) ][:]
+    r = list(range(self.dims))[:]
     deltas = list(map(lambda i : (regionpt[i] - point[i]), r))
     return deltas
   def epsilonModifyMagnitude(self, oldvector, epsilon):
-    beta = epsilon #1-epsilon
-    newvector = list(map(lambda x : x * beta, oldvector))
+    newvector = list(map(lambda x : x * (epsilon ** self.j), oldvector))
     return newvector
   def vectorSum(self, a, b):
-    r = [ i for i in range(self.dims) ][:]
+    r = list(range(self.dims))[:]
     return list(map(lambda i : (a[i] + b[i]), r))
   def getL2NDist(self, a, b):
-    sumd = 0
-    for i in range(len(a)):
-      sumd += (a[i] - b[i]) ** 2
+    sumd = ft.reduce(
+      lambda a,x : a + ((x[0] - x[1]) ** 2),
+      list(zip(a, b)),
+      0
+    )
     return math.sqrt(sumd)
