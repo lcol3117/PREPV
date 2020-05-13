@@ -1,15 +1,14 @@
 import random as rnd, math as math, functools as ft
 class PREPV_agent:
-  def __init__(self, dims, mip):
+  def __init__(self, dims, mip, j = 4):
     self.dims = dims
     self.accdata = []
     self.old_accdata = []
     self.usedregions = []
     self.nsteps = 0
     self.prev_epsilon = None
-    self.epsilonlimit = None
     self.mip = mip
-    self.j = 3
+    self.j = j
   def updateQTable(self, policy, performance):
     self.old_accdata = self.accdata[:]
     self.accdata.append([policy, performance])
@@ -29,28 +28,16 @@ class PREPV_agent:
     respoint = self.vectorSum(newvector, selectedpoint)
     return respoint
   def calculateEpsilon(self):
-    k = 0.5
     try: 
       qtablemax = ft.reduce(
         lambda a,x : x[1] if x[1] > a else a,
         self.accdata,
         float("-inf")
       )
-      old_qtablemax = ft.reduce(
-        lambda a,x : x[1] if x[1] > a else a,
-        self.old_accdata,
-        float("-inf")
-      )
-      if qtablemax > old_qtablemax:
-        res = (qtablemax / self.mip) ** (1 / k)
-      else:
-        if self.prev_epsilon > (1 - (1 / 8)):
-          self.epsilonlimit = 1
-        res = (self.epsilonlimit * (self.nsteps + k)) / ((self.nsteps + k) + k)
+      res = (qtablemax / self.mip) ** 2
     except IndexError:
       res = 0
     self.prev_epsilon = res
-    self.epsilonlimit = 1 - ((1 - res) / 2)
     print("Set prev_epsilon to {}. ".format(self.prev_epsilon.__repr__()))
     return res
   def selectRegion(self, epsilon):

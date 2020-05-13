@@ -5,19 +5,25 @@ PREPV reinforcment learning (Probabilistic Regional Epsilon Proportional Vector)
 
 [![Run on Repl.it](https://repl.it/badge/github/lcol3117/PREPV)](https://repl.it/github/lcol3117/PREPV)
 
-**PREPV hyperparameters: MIP only. This is because of the IPL2 algorithm which makes me happy. **
+**PREPV hyperparameters: MIP and j. j = 4 should work fine. **
 
-However, if something is really messed up change j to something other than 3. 
+MIP is the maximum impossible performance
+
+However, if something is really messed up change j to something other than 4. 
+
+Higher j -> More spread out
+
+Lower j -> Less spread out
 
 **Use: **
 
-`PREPV_agent(dims, mip)`
+`PREPV_agent(dims, mip, j = 4)`
 
 MIP = Maximum Impossible Performance
 
 **PREPV algorithm: **
 
-First calculate epsilon per the IPL2 algorithm, it is mostly math so see the code for how it works. It is in `PREPV_agent.calculateEpsilon`.
+First calculate epsilon as the max(Q) / MIP.
 
 Calculate a list of all points in the Q-table ranked by performance. 
 
@@ -29,7 +35,7 @@ Then, select a random point. This is the initial selected point.
 
 Next, calculate the vector from the initial selected point to the selected region point. 
 
-Multiply this vector by the scalar epsilon^3.
+Multiply this vector by the scalar epsilon^j.
 
 Sum the vector of the initial selected point with this new vector. 
 
