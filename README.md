@@ -39,6 +39,8 @@ Multiply this vector by the scalar epsilon^j.
 
 Sum the vector of the initial selected point with this new vector. 
 
+The process is repeated with minimums but the random point is replaced with the new vector sum and the scalar is (epsilon^j)/4 instead of epsilon^j. 
+
 This new vector corresponds to the point in policy space that the agent is selecting. 
 
 **PREPV example: **

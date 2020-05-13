@@ -41,6 +41,9 @@ class PREPV_agent:
         float("-inf")
       )
       res = (qtablemax / self.mip)
+      print("Initial epsilon is {}. ".format(res))
+      if res >= 0.8:
+        res = 0.8 + (((5 * (res - 0.8)) ** self.j) / 5)
     except IndexError:
       res = 0
     self.prev_epsilon = res
@@ -88,7 +91,7 @@ class PREPV_agent:
     newvector = list(map(lambda x : x * (epsilon ** self.j), oldvector))
     return newvector
   def calculateAvoidanceVector(self, vec_a, epsilon):
-    v_delta_b_0 = list(map(lambda x : x * ((epsilon ** self.j) / 2), vec_a))
+    v_delta_b_0 = list(map(lambda x : x * ((epsilon ** (self.j)) / 4), vec_a))
     return self.vectorSum(vec_a, v_delta_b_0)
   def vectorSum(self, a, b):
     r = list(range(self.dims))[:]

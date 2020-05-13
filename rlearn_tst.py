@@ -35,9 +35,13 @@ def realLearning():
   while notdone:
     result = realLearnStep()
     try:
-      notdone = agentmodel.prev_epsilon < 0.95
+      [bestpolicy, bestperformance] = list(reversed(sorted(
+        agentmodel.accdata,
+        key = lambda x : x[1]
+      )))[0]
+      notdone = bestperformance < 2.9
       print("NOT DONE" if notdone else "DONE")
-    except TypeError:
+    except:
       notdone = True
     print("{} steps have passed. ".format(cnt))
     cnt += 1
